@@ -1,0 +1,42 @@
+package org.example
+
+import org.example.Cnh;
+import org.example.Status;
+import java.time.LocalDate;
+
+rule "Cnh Expirada"
+	dialect "java"
+	when
+		$cnh: Cnh(isExpirada())
+	then
+	    System.out.println( $cnh + " INVALIDA porque expirou" );
+		modify($cnh) {
+		  setStatus(Status.INVALIDA),
+		  setCausa("CNH expirada")
+		}
+end
+
+rule "Cnh pontos"
+	dialect "java"
+	when
+		$cnh: Cnh(pontos > 20)
+	then
+        System.out.println( $cnh + " INVALIDA por ter mais pontos que o permitido");
+        modify($cnh) {
+            setStatus(Status.INVALIDA),
+            setCausa("Cnh tem mais pontos que o permitido de 20")
+        }
+end
+
+rule "Cnh valida"
+	dialect "java"
+	when
+		$cnh: Cnh(status == Status.NAO_PROCESSADA)
+	then
+	    System.out.println( $cnh + " sem validacao, considerar VALIDA por enquanto" );
+		modify($cnh) {
+		  setStatus(Status.VALIDA),
+		  setCausa("Cnh sem status, considerada valida por enquanto")
+		}
+end
+
